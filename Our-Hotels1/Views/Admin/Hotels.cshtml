@@ -1,0 +1,188 @@
+﻿@model List<OurHotels.Dto.Admin.HotelDtoFromAdmin>
+@using OurHotels.Dto.Admin
+
+@{
+    Layout = "_AdminLayout";
+    string Fullname = null;
+    List<HotelDtoFromAdmin> hotel = new List<HotelDtoFromAdmin>();
+    HotelDtoFromAdmin hotelDto = new HotelDtoFromAdmin();
+    hotel = ViewData["SearchHotelsByName"] != null ? (List<HotelDtoFromAdmin>)ViewData["SearchHotelsByName"] : null;
+
+}
+<style>
+    .btn-custom {
+        background-color: #fd7e14;
+        color: #fff;
+        border: none;
+        padding: 6px 12px; /* Adjust padding for better button size */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+        .btn-custom:hover {
+            background-color: #e66300;
+        }
+</style>
+
+
+
+<div class="header">
+    <div class="header-left">
+        <a href="index.html" class="logo">
+            <img src="/admin/assets/img/logo.png" alt="Logo">
+        </a>
+        <a href="index.html" class="logo logo-small">
+            <img src="/admin/assets/img/logo-small.png" alt="Logo" width="30" height="30">
+        </a>
+    </div>
+    <!-- Page Header -->
+    <div class="header-">
+        <a href="javascript:void(0);" id="toggle_btn">
+            <i class="fe fe-text-align-left"></i>
+        </a>
+
+        <div class="top-nav-search">
+            <form asp-controller="Admin" asp-action="GetHotel" method="get">
+                <input type="text" class="form-control" placeholder="Search here" asp-for="@Fullname">
+                <button class="btn" type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="makepdf()">Generate PDF</button>
+
+
+    </div>
+</div>
+<!-- /Page Header -->
+<!-- Recent Orders -->
+@if (hotel is not null)
+{
+
+
+    <div class="card card-table flex-fill">
+        <div class="card-header">
+            <h4 class="card-title">Hotels List</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsifve">
+                <table class="table table-hover table-center mb-0" id="Hotel">
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>Manager Name</th>
+                            <th>Hotel's City</th>
+                            <th>Hotel's State</th>
+                            <th>Maneger Phone</th>
+
+                        </tr>
+                    </thead>
+                    @foreach (var item in hotel)
+                    {
+                        <tr>
+
+                            @*<td>@Html.DisplayFor(m => Convert.ToBase64String(item.HotelPicture))</td>*@
+                            <td> @Html.DisplayFor(m => item.HotelName)</td>
+                            <td> @Html.DisplayFor(m => item.ManagerName)</td>
+                            <td> @Html.DisplayFor(m => item.City)</td>
+                            <td> @Html.DisplayFor(m => item.State)</td>
+                            <td> @Html.DisplayFor(m => item.ManegerPhone)</td>
+                            <td><a asp-action="HotelDetails" class="btn btn-success text-white" asp-route-id="@item.HotelEntityId"><i class="fa-solid fa-list"></i></a></td>
+                        </tr>
+                    }
+
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /Recent Orders -->
+
+}
+else
+{
+    <div class="card card-table flex-fill">
+        <div class="card-header">
+            <h4 class="card-title">Hotels List</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsifve">
+                <table class="table table-hover table-center mb-0" id="Hotel">
+                    <thead>
+                        <tr>
+                            <th>Hotel Name</th>
+                            <th>Manager Name</th>
+                            <th>Hotel's City</th>
+                            <th>Hotel's State</th>
+                            <th>Maneger Phone</th>
+
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            @*<td>@Html.DisplayFor(m => Convert.ToBase64String(item.HotelPicture))</td>*@
+                            <td> @Html.DisplayFor(m => item.HotelName)</td>
+                            <td> @Html.DisplayFor(m => item.ManagerName)</td>
+                            <td> @Html.DisplayFor(m => item.City)</td>
+                            <td> @Html.DisplayFor(m => item.State)</td>
+                            <td> @Html.DisplayFor(m => item.ManegerPhone)</td>
+                            @*<td><a asp-action="HotelDetails" class="btn btn-success text-white" asp-route-id="@item.HotelEntityId"><i class="fa-solid fa-list"></i></a></td>*@
+                            <td>
+                            <td>
+                                <a asp-action="HotelDetails" class="btn btn-custom" asp-route-id="@item.HotelEntityId">
+                                    <i class="fas fa-list"></i>
+                                    View Details
+                                </a>
+                            </td>
+
+                            </td>
+
+
+                        </tr>
+                    }
+
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    function makepdf() {
+        var printme = document.getElementById('Hotel'); // Use the actual ID
+        var name = window.open("", "", "width=700, height=900"); // Fix the format of the window.open()
+        var style = `
+            <style>
+                /* Add your custom print styles here */
+                body {
+                    font-size: 12px; /* Adjust font size for printing */
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ccc;
+                    padding: 6px;
+                    text-align: left;
+                }
+            </style>
+        `;
+
+        var content = style + printme.outerHTML;
+        name.document.write(content);
+        name.document.close();
+        name.focus();
+        name.print();
+        name.close();
+    }
+</script>
+
+
+
+

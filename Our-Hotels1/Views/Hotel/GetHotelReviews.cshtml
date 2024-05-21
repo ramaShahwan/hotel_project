@@ -1,0 +1,195 @@
+﻿@model IEnumerable<HotelReviewDto>
+@*@model IEnumerable<GroupedHotelReviewDto>*@
+@{
+	Layout = "_HotelLayout";
+	   DateTime? from = ViewData["from"] as DateTime? ??null;
+    DateTime? to = ViewData["to"] as DateTime? ??null;
+	ViewData["title"]="Hotel reviews";
+}
+<div class="col-md-7 col-lg-8 col-xl-9">
+
+
+					<div class="row">
+								<div class="col-md-12">
+									<div class="card dash-card">
+										<div class="card-body">
+											<div class="row">
+												<div class="col-md-12 col-lg-4">
+													<div class="dash-widget dct-border-rht">
+													@*	<div class="circle-bar circle-bar1">
+															<div class="circle-graph1" data-percent="75"><canvas width="400" height="400"></canvas>
+																<img src="assets/img/icon-01.png" class="img-fluid" alt="patient">
+															</div>
+														</div>*@
+														<div class="dash-widget-info">
+															<h6>Total Visitors</h6>
+															<h3>@Model.Count()</h3>
+															<p class="text-muted">Till Today</p>
+														</div>
+													</div>
+												</div>
+												
+												<div class="col-md-12 col-lg-4">
+													<div class="dash-widget dct-border-rht">
+														
+														<div class="dash-widget-info">
+															<h6>Total Rating</h6>
+															  @{
+
+                                        double totalRating = Model.Sum(item => item.Rating);
+                                        double averageRating = Model.Count() > 0 ? totalRating / Model.Count() : 0;
+                                    }
+															<h3>@averageRating</h3>
+															<p class="text-muted">Till Today</p>
+														</div>
+													</div>
+												</div>
+												
+												<div class="col-md-12 col-lg-4">
+													<div class="dash-widget">
+														
+														<div class="dash-widget-info">
+															<h6>Total Reviews</h6>
+															<h3>@Model.Count(s => !string.IsNullOrEmpty(s.Reviews))</h3>
+															<p class="text-muted">Till today</p>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							         <form  id="searchForm" asp-action="GetHotelReviews" asp-controller="Hotel" method="get">
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="fromDate">From:</label>
+                <div class="input-group">
+                    <input type="date" class="form-control" placeholder="From" name="from" value="@from?.ToString("yyyy-MM-dd")" id="checkInDate" >
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="toDate">To:</label>
+                <div class="input-group">
+                    <input type="date" class="form-control"  name="to" value="@to?.ToString("yyyy-MM-dd")" placeholder="To"id="checkOutDate"  >
+				
+
+                   
+                </div>
+				<p id="dateErrorMessage" style="color: red; display: none;">Please select a date equal to or later than the From date.</p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="row">
+    <div class="col-md-2">  
+        <button type="submit" class="btn btn-primary"> Search</button>
+    </div>
+
+</div>
+    </form>
+							<div class="row">
+								<div class="col-md-12">
+								@*	<h4 class="mb-4">Patient Appoinment</h4>*@
+									<div class="appointment-tab">
+									
+										<!-- Appointment Tab -->
+										<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
+											<li class="nav-item">
+												<a class="nav-link active" href="#upcoming-appointments"  style=" display:flex;justify-content:center" data-toggle="tab">Visitors</a>
+											</li>
+										</ul>
+										<!-- /Appointment Tab -->
+										
+										<div class="tab-content">
+										
+											<!-- Upcoming Appointment Tab -->
+											<div class="tab-pane show active" id="upcoming-appointments">
+												
+												<div class="card card-table mb-0">
+													<div class="card-body">
+														<div class="table-responsive">
+															<table class="table table-hover table-center mb-0">
+																<thead>
+																	<tr>
+																		<th>Visistor Name</th>
+																		<th>Visitor mobile</th>
+																		<th>Booking Date</th>
+																		<th>CheckIn Date</th>
+																		<th>Checout Date</th>
+																		<th class="text-center">Paid Amount</th>
+																		<th>Rating</th>
+																		<th>Review</th>
+																	</tr>
+																</thead>
+												<tbody>
+															
+																	
+																	@foreach( var item in Model)
+											{
+													<tr>
+																		
+																		<td>@item.CustomerName</td>
+																		<td>@item.mobile</td>
+																		<td>@item.BookingDate</td>
+																		<td>@item.CheckInDate.ToString("dd/MM/yyyy")</td>
+																		<td>@item.CheckOutDate.ToString("dd/MM/yyyy")</td>
+																		<td class="text-center">@item.Price<span>SY</span></td>
+																		@if(item.Rating == 0)
+													{
+														<td>No Rate yet</td>
+													}
+																		<td>@item.Rating</td>
+																		<td>@item.Reviews</td>
+																		
+																	</tr>
+											}
+																</tbody>
+															</table>		
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- /Upcoming Appointment Tab -->
+									   </div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+						<script>
+     function updateCheckOutMinDate() {
+        var checkInDateInput = document.getElementById("checkInDate");
+        var checkOutDateInput = document.getElementById("checkOutDate");
+
+        // Get the selected check-in date
+        var selectedCheckInDate = new Date(checkInDateInput.value);
+
+        // Calculate the next day from the selected check-in date
+        var nextDay = new Date(selectedCheckInDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format the next day as "yyyy-mm-dd" (the required format for the date input)
+        var formattedNextDay = nextDay.toISOString().split('T')[0];
+
+        // Set the min attribute of the check-out date input to prevent selecting a date before the next day
+        checkOutDateInput.min = formattedNextDay;
+
+        // If the selected check-out date is before the new min date, reset it to the new min date
+        if (checkOutDateInput.value < formattedNextDay) {
+            checkOutDateInput.value = formattedNextDay;
+        }
+    }
+     document.getElementById("checkInDate").addEventListener("change", updateCheckOutMinDate);
+</script>

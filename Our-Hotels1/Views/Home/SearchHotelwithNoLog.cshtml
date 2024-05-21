@@ -1,0 +1,81 @@
+﻿@model List<OurHotels.Dto.Customer.HotelDetailsDto>
+
+@{
+    Layout = "_Layout";
+    string l = null;
+}
+
+<div class="breadcrumb-bar">
+    <!-- Breadcrumb content here -->
+</div>
+
+<div class="content" style="transform: none; min-height: 128.5px;">
+    <div class="container-fluid" style="transform: none;">
+        <div class="row" style="transform: none;">
+            <div class="col-md-12 col-lg-4 col-xl-3 theiaStickySidebar" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
+                <!-- Search Filter -->
+                <!-- Search Filter content here -->
+            </div>
+            <div class="col-md-12 col-lg-8 col-xl-9">
+                @foreach (var hotel in Model)
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="hotel-widget">
+                                <div class="hotel-img">
+                                    <img src="data:image;base64,@Convert.ToBase64String(hotel.HotelPicture)" class="img-fluid" alt="Hotel Image">
+                                </div>
+                                <div class="hotel-info">
+                                    <h2 class="hotel-name">@hotel.HotelName</h2>
+                                    <p class="hotel-address">@hotel.HotelAddress</p>
+                                    <h5 class="hotel-city">@hotel.City</h5>
+                                    <div class="rating">
+                                        <i class="fas fa-star filled"></i>
+                                        <span class="d-inline-block average-rating">@hotel.NumOfStars</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @foreach (var room in hotel.Rooms)
+                            {
+                                <div class="room-widget">
+                                    <div class="room-img">
+                                        <!-- Display the room images here -->
+                                        <ul class="room-gallery">
+                                            @foreach (var roomImage in room.RoomImagesUrls)
+                                            {
+                                                <li>
+                                                    <a class="avatar avatar-sm mr-2" data-fancybox="gallery">
+                                                        <img src="~/assets/img/rooms/@roomImage.Url.Split("rooms\\").ElementAt(1);" alt="Room Image">
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="room-info">
+                                        <h3 class="room-name">Room ID: @room.RoomEntityId</h3>
+                                        <p class="room-beds">@room.NumOfBeds Beds</p>
+                                        <p class="room-price">Price: @room.Price SY</p>
+                                        @if (room.Suite)
+                                        {
+                                            <p>Suite</p>
+                                        }
+                                        else
+                                        {
+                                            <p>Room</p>
+                                            <p><span>@room.CheckIn </span> <span> @room.CheckOut</span></p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                <!-- /Loop through each hotel and their corresponding rooms -->
+                <div class="load-more text-center">
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("LoadRoomsInfo", "Home")">Load More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,197 @@
+﻿@{
+    Layout = "_AdminLayout";
+    @using OurHotels.Dto
+    @using OurHotels.Dto.Hotel
+    Layout = "_AdminLayout";
+    string Fullname = null;
+    List<BookingResult> Customer = new List<BookingResult>();
+    BookingResult CustomerDto = new BookingResult();
+    Customer = ViewData["AllCustomers"] != null ? (List<BookingResult>)ViewData["AllCustomers"] : null;
+}
+@model List<OurHotels.Dto.Hotel.HotelDto>
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Welcome Admin!</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row" style="justify-content: space-evenly;">
+        <div class="col-xl-3 col-sm-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="dash-widget-icon text-primary border-primary" >
+                            <i class="fe fe-home" ></i>
+                        </span>
+
+
+                        <div class="dash-count">
+                            <h3>@Model.Count </h3>
+                        </div>
+                    </div>
+                    <div class="dash-widget-info">
+                        <h6 class="text-muted">Hotels</h6>
+                        <div class="progress progress-sm" >
+                            <div class="progress-bar bg-primary w-50" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                      <span class="dash-widget-icon text-primary border-primary">
+                            <i class="fe fe-users"></i>
+                        </span>
+                        <div class="dash-count">
+                            <h3>@Customer.Count</h3>
+                        </div>
+                    </div>
+                    <div class="dash-widget-info">
+
+                        <h6 class="text-muted">Customers</h6>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-success w-50"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-xl-3 col-sm-6 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="dash-widget-header">
+                            <span class="dash-widget-icon text-warning border-warning">
+                                <i class="fe fe-folder"></i>
+                            </span>
+                            <div class="dash-count">
+                                <h3>$62523</h3>
+                            </div>
+                        </div>
+                        <div class="dash-widget-info">
+
+                            <h6 class="text-muted">Revenue</h6>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-warning w-50"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                76
+
+            </div>*@
+    </div>
+    <div class="row">
+       
+            <div class="col-md-6 d-flex">
+
+                <!-- Recent Orders -->
+                <div class="card card-table flex-fill">
+                    <div class="card-header">
+                        <h4 class="card-title">Holtels List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsifve">
+                            <table class="table table-hover table-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Hotel Name</th>
+                                        @*<th>Earned</th>*@
+                                        <th>Num Of Stars</th>
+                                    </tr>
+                                </thead>
+                                @foreach (var item in Model)
+                                {
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <h2>@item.HotelName</h2>
+                                            </td>
+                                            @*<td>@item.</td>*@
+                                            <td>
+                                                @if (@item.numOfStars == 1)
+                                                {
+                                                    <i class="fe fe-star text-warning"></i>
+                                                }
+                                                else if (@item.numOfStars == 2)
+                                                {
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                }
+                                                else if (@item.numOfStars == 3)
+                                                {
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                }
+                                                else if (@item.numOfStars == 4)
+                                                {
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star-o text-secondary"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                    <i class="fe fe-star text-warning"></i>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                }
+                                </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Recent Orders -->
+            </div>
+            <div class="col-md-6 d-flex">
+                <div class="card  card-table flex-fill">
+                    <div class="card-header">
+                        <h4 class="card-title">Customers List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Customer Name</th>
+                                        @*<th>Phone</th>*@
+                                        <th>Last Visit</th>
+                                        <th>Paid</th>
+                                    </tr>
+                                </thead>
+                                @foreach (var item in Customer)
+                                {
+                                    <tbody>
+                                        <tr>
+                                            <td>@item.CustomerFirstName</td>
+                                            @*<td>@item.phoneNumber</td>*@
+                                            <td>@item.BookingDate.ToString("dd/MM/yyyy")</td>
+                                            <td>@item.TotalBillPaid <span>Sy</span></td>
+                                        </tr>
+                                    </tbody>
+                                }
+                                </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

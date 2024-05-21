@@ -1,0 +1,364 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNet.Identity;
+@using Our_Hotels1.Resources.Views.Shared
+@inject IStringLocalizer<LayoutResource> localizer2
+@inject SignInManager<UserEntity> SignInManager
+
+@model RoomDetailsDto
+@{
+	     DateTime checkInDate = ViewData["From"] as DateTime? ?? DateTime.Now;
+         DateTime checkOutDate = ViewData["To"] as DateTime? ?? DateTime.Now.AddDays(1);
+	Layout="_layout";
+	List<string> reviews = ViewData["Reviews"] as List<string>;
+	List<string> FreeServices = ViewData["FreeServices"] as List<string>;
+	List<HotelServicesDto> Services = ViewData["Services"]  as List<HotelServicesDto>;
+}
+<div >
+       @*  @foreach (var room in Model.Rooms)
+                    {*@
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="doctor-widget">
+                                    <div class="doc-info-left">
+                                        <div class="doctor-img">
+                                            <a href="doctor-profile.html">
+                                                @if(Model.Hotel.HotelPicture == null)
+                                                    {
+                                                        
+                                                <img src="~/assets/img/avatar-male.jpg" class="img-fluid" alt="User Image">
+
+                                            }else
+                                                    {
+                                                <img src="data:image;base64,@Convert.ToBase64String(Model.Hotel.HotelPicture)" class="img-fluid" alt="User Image">
+                                                        
+                                                    }
+                                            </a>
+                                        </div>
+                                        <div class="doc-info-cont">
+                                            <h4 class="doc-name">@Model.HotelName</h4>
+                                            <p class="doc-speciality"><i class="fas fa-map-marker-alt"></i> @Model.Hotel.HotelAddress</p>
+                                            @*<h5 class="doc-department">@Model.City</h5>*@
+                                          @* <div class="rating">
+                                            @for (int i = 1; i <= 5; i++)
+                                                     {
+                                                       if (i <= Model.NumOfStars)
+                                                          {
+
+                                                           <i class="fas fa-star filled"></i>
+                                                            }
+                                                          else
+                                                                {
+                                              <i class="fas fa-star"></i>
+                                                             }
+                                                    }
+                                         </div>*@
+
+                                            <div class="clinic-details">
+                                                @*<p class="doc-location"><i class="fas fa-map-marker-alt"></i>@hotel.City</p>*@
+							@if (Model.RoomImagesUrls != null)
+							{
+								<ul class="clinic-gallery">
+
+									@foreach (var image in Model.RoomImagesUrls)
+									{
+										<li>
+											<a class="avatar avatar-sm mr-2" data-fancybox="gallery">
+												<img  src="~/assets/img/rooms/@image.Url.Split("rooms\\").ElementAt(1)" alt="Room Image">
+											</a>
+										</li>
+									}
+								</ul>
+							}
+                                            </div>
+                                            <div class="clinic-services" id="clinicServices_@Model.RoomEntityId">
+                            <!-- Content will be updated dynamically using JavaScript -->
+                        </div>
+                                            @*<div class="doc-info-cont">
+                                                
+                                                <p class="doc-speciality" style="color:black  "> @hotel.HotelDesccription</p>
+                                            </div> *@
+                                        </div>
+                                    </div>
+                                    <div class="doc-info-right">
+                                        <div class="clini-infos">
+                                            <ul>
+
+                                                @if (Model.AvgRating != null && double.TryParse(Model.AvgRating.ToString(), out double avgRatingValue))
+                                                                   {
+                                                                 @if (avgRatingValue < 1)
+                                                                        {
+                                                                     <li>No rating yet</li>
+                                                                       }
+                                          else
+                                            {
+                                  <li><i class="far fa-thumbs-up"></i> @avgRatingValue.ToString("0.00")</li>
+                                   }
+                                  }
+                                     else
+                                        {
+                                    <li>No rating yet</li>
+}
+                                                 <li><i class="far fa-comment"></i> @Model.NumOfReviews.ToString() Feedback </li>
+                                                      <li><i class="fas fa-bed"></i> @Model.NumOfBeds Beds</li>
+                                                        @if (Model.Sea == "Yes")
+                                                       {
+                                                                <li><i class="fas fa-water"></i>With sea view</li>
+                                        }
+                                                             else
+                                                {
+                                                      <li><i class="fas fa-water"></i>No sea view</li>
+                                                }
+                                                  <li><i class="far fa-money-bill-alt"></i> @Model.Price SY <i class="fas fa-info-circle" data-toggle="tooltip" title="" data-original-title="Lorem Ipsum"></i></li>
+                                                    @if (Model.Suite == true)
+                                                {
+                                                    <li>Suit</li>
+                                                }
+                                                else
+                                                {
+                                                    <li><p>Room</p></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="clinic-booking">
+                                            <a class="view-pro-btn" >View Profile</a>
+                                            <a class="apt-btn" data-room-id="@Model.RoomEntityId" href="#" onclick="addRoomForReservation(this)">Add This room for Reservation</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="card">
+                            <div class="card-body pt-0">
+                                <div class="tab-content pt-0">
+                                    <div role="tabpanel" id="doc_overview" class="tab-pane fade show active">
+									<div class="row">
+										<div class="col-md-12 col-lg-9">
+										
+											<!-- About Details -->
+											<div class="widget about-widget">
+												<h4 class="widget-title" style="margin-top:20px;">Hotel Description</h4>
+												<p style="margin-bottom:30px;margin-top:30px;">@Model.Hotel.HotelDesccription</p>
+											</div>
+											<div class="widget about-widget">
+												<h4 class="widget-title" style="margin-top:20px;">Room Location and phone</h4>
+												<p style="margin-bottom:30px;margin-top:30px;"><span>Room Phone </span>@Model.phone <span> </span></p>
+												<p style="margin-bottom:30px;margin-top:30px;"><span>Room floor :</span>@Model.floor <span>  </span>Room Num :<span> </span>@Model.RoomNum <span> </span></p>
+											</div>
+											<!-- /About Details -->
+										
+											<!-- Education Details -->
+											<div class="widget education-widget">
+												<h4 class="widget-title">Directions</h4>
+												<div class="experience-box">
+													<ul class="experience-list">
+														<li>
+															<div class="experience-user">
+																<div class="before-circle"></div>
+															</div>
+															<div class="experience-content">
+																<div class="timeline-content">
+																	<a href="#/" class="name">@Model.D1</a>
+																	@*<div>BDS</div>
+																	<span class="time">1998 - 2003</span>*@
+																</div>
+															</div>
+														</li>
+														<li>
+															<div class="experience-user">
+																<div class="before-circle"></div>
+															</div>
+															<div class="experience-content">
+																<div class="timeline-content">
+																	<a href="#/" class="name">@Model.D2</a>
+																	@*<div>MDS</div>
+																	<span class="time">2003 - 2005</span>*@
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+											<!-- /Education Details -->
+									
+											<!-- Experience Details -->
+											<div class="widget experience-widget">
+												<h4 class="widget-title">Size</h4>
+												<div class="experience-box">
+													<ul class="experience-list">
+														<li>
+															<div class="experience-user">
+																<div class="before-circle"></div>
+															</div>
+															<div class="experience-content">
+																<div class="timeline-content">
+																	<a href="#/" class="name">@Model.width <span>Width</span></a>
+																</div>
+															</div>
+														</li>
+														<li>
+															<div class="experience-user">
+																<div class="before-circle"></div>
+															</div>
+															<div class="experience-content">
+																<div class="timeline-content">
+																	<a href="#/" class="name">@Model.height <span>Height</span></a>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+											<!-- /Experience Details -->
+								
+											<!-- Awards Details -->
+										@*	<div class="widget awards-widget">
+												<h4 class="widget-title">Reviews</h4>
+												<div class="experience-box">
+													<ul class="experience-list">
+														@foreach(var review in reviews)
+														{
+														<li>
+															<div class="experience-user">
+																<div class="before-circle"></div>
+															</div>
+															<div class="experience-content">
+																<div class="timeline-content">
+																	<p> @review</p>
+																</div>
+															</div>
+														</li>
+														}
+														
+													
+														
+													</ul>
+												</div>
+											</div>*@
+											<!-- /Awards Details -->
+											
+											<!-- Services List -->
+											<div class="service-list">
+												<h4>Reviews</h4>
+												<ul class="clearfix" >
+													@foreach(var review in reviews)
+														{
+															if(review !=null)
+										{
+													<li >@review</li>
+											
+										}
+													}
+													
+												</ul>
+											</div>
+											
+											   @*RoomImages*@
+											   <div class="row">
+				  <div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<h4 class="card-title">Room Images </h4>
+										</div>
+										<div class="card-body">
+											@foreach(var image in Model.RoomImagesUrls)
+												{
+												      
+											<div class="avatar avatar-xxl">	<img class="avatar-img" alt="User Image" src="~/assets/img/rooms/@image.Url.Split("rooms\\").ElementAt(1)" alt="Room Image">	</div>   
+												
+												}
+											
+											
+										</div>
+									</div>
+								</div>
+			  </div>
+											   <div class="row">
+												   @foreach(var item in Services)
+									{
+									 <div>
+				  <div class="form-group row">
+											<label class="col-form-label col-md-2" style="margin-right: 500px">Services</label>
+											<div class="col-md-10">
+												<div class="checkbox">
+													<img style="width:80px" class="avatar-img rounded-circle" alt="User Image"src="data:image;base64,@Convert.ToBase64String(item.Extra_ServicesPicture)" />
+													<label>
+													 	<input  name="@item.Price" value="@item.Extra_ServicesName" class="service-checkbox" data-price="@item.Price" />
+														 
+													</label>
+													<div> @item.Price</div>
+													<div>@item.Description </div>
+												</div>
+												
+											</div>
+											
+										</div>
+			  </div>
+											
+}
+											  
+			  </div>
+			 <div class="row">
+		<h4>Free Services</h4>
+
+    <div class="col d-flex">
+		@if(FreeServices.Count ==0)
+									{
+										<p >No free services </p>
+									}
+									else
+									{
+										@foreach(var free in FreeServices)
+									{
+										<p > @free </p> <span> </span>
+									}
+									}
+		 
+									</div>
+	 </div>
+										</div>
+									</div>
+								</div>
+
+                                    </div>
+                               </div>	   
+                        </div>
+						
+                        </div>
+						<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+						<script>
+    $(document).ready(function() {
+        $(".reserve-btn").click(function(e) {
+            e.preventDefault();
+            var roomId = $(this).data("room-id");
+            var servicesPrices = [];
+			console.log(roomId);
+            $(".service-checkbox:checked").each(function() {
+                var price = parseFloat($(this).data("price"));
+            });
+			console.log(servicesPrices);
+             var checkinDate = new Date('@checkInDate');
+            var checkoutDate = new Date('@checkOutDate');
+            // Send the data to the server using AJAX
+            $.ajax({
+                type: "POST",
+                url: "/Customer/AddServicesforbooking",
+                data: {
+                 roomId: roomId,
+                 servicesPrices: servicesPrices,
+                 CheckinDate: checkinDate,
+                 CheckoutDate: checkoutDate
+                },
+                success: function(response) {
+                    // Handle success response
+                    // For example, you can redirect to a success page
+                },
+                error: function(error) {
+                    // Handle error response
+                }
+            });
+        });
+    });
+</script>

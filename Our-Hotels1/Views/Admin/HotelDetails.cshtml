@@ -1,0 +1,305 @@
+﻿@model OurHotels.Dto.Admin.HotelDtoFromAdmin
+
+<link href="~/css/site.css" rel="stylesheet" />
+@{
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .profile-picture {
+        height: 200px;
+        width: 200px;
+        object-fit: cover;
+    }
+   
+
+    /*.image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;*/ /* Maintain the aspect ratio and fit within the container */
+    /*}
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 500px;*/ /* Set the desired height for the image container */
+        /*margin-bottom: 100px;*/ /* Add spacing between images and buttons */
+    /*}
+
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+
+        .button-container button {
+            flex: 1;*/ /* Equal width for buttons */
+            /*margin: 0 5px;*/ /* Add spacing between buttons */
+        /*}
+
+            .button-container button.active {
+                background-color: #e84646;*/ /* Change the button color when active */
+                /*color: white;
+            }*/
+
+
+
+
+</style>
+<div class="col-md-7 col-lg-8 col-xl-9" style="justify-content:center">
+    <div class="card">
+        <div class="card-body">
+            <div class="row form-row">
+                <div class="col-12 col-md-12">
+                    <div class="form-group">
+                        <div class="change-avatar">
+                            <div class="profile-img">
+                                <img src="assets/img/patients/patient.jpg" alt="User Image">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                @*<input type="hidden" asp-for="@addHotelDto.UserEntityId" />*@
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HotelName">Hotel Name</label>
+                        <input type="text" class="form-control" asp-for="HotelName" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ManagerName">Manger Name</label>
+                        <input asp-for="ManagerName" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="State">State</label>
+                        <input asp-for="State" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label>Number of stars</label>
+                        <input asp-for="numOfStars" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="Phone1">Phone1</label>
+
+                        <input asp-for="Phone1" class="form-control" readonly>
+                    </div>
+
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Phone2">Phone2</label>
+
+
+                        <input asp-for="Phone2" class="form-control" readonly>
+
+                    </div>
+                </div>
+
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ManegerPhone">Manger Phone</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">+963</span>
+                            </div>
+                            <input id="numberInput" asp-for="ManegerPhone" class="form-control" readonly>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HotelAddress">Address</label>
+                        <input class="form-control" asp-for="HotelAddress" readonly>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="City">City</label>
+                        <input class="form-control" asp-for="City" readonly>
+
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Description">Description</label>
+                        <input class="form-control" asp-for="Description" readonly>
+
+                    </div>
+                </div>
+                @*<div class="row">
+            <div class="col-12 col-md-6">
+                <div class="form-group text-center">
+                    <label asp-for="IdentityCertifcate">Identity Certifecate photo</label>
+                    <div class="image-container">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.IdentityCertifcate))" alt="Identity Certifecate photo" class="image" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group text-center">
+                    <label asp-for="HotelPicture">Hotel Picture</label>
+                    <div class="image-container">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.HotelPicture))" alt="Hotel Picture" class="image" />
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+
+                @*<div class="row">
+            <div class="col-12 col-md-6 text-center">
+                <div class="form-group">
+                    <label asp-for="IdentityCertifcate">Identity Certifecate photo</label>
+                    <div class="image-container">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.IdentityCertifcate))" alt="Identity Certifecate photo" class="image" />
+                    </div>
+                </div>
+                <div class="button-container">
+                    @if (Model.State == OurHotels.Dto.Hotel.State.confirmed)
+                    {
+                        <button class="btn btn-success active" style="width: 100%">Confirmed<i class="fas fa-check-circle text-success"></i></button>
+                        <form asp-controller="Admin" asp-action="CancelHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                            <button style="color: #e84646; width: 100%" type="submit" class="btn btn-outline-danger active">Cancel</button>
+                        </form>
+                    }
+                    else if (Model.State == OurHotels.Dto.Hotel.State.canceled)
+                    {
+                        <button class="btn btn-danger active" style="width: 100%">Canceled</button>
+                        <form asp-controller="Admin" asp-action="ConfirmHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                            <button style="color: #e84646; width: 100%" type="submit" class="btn btn-outline-success active">Confirm</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Admin" asp-action="ConfirmHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                            <button type="submit" class="btn btn-outline-success active" style="width: 100%">Confirm</button>
+                        </form>
+                        <form asp-controller="Admin" asp-action="CancelHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                            <button type="submit" class="btn btn-outline-danger active" style="width: 100%">Cancel</button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <div class="col-12 col-md-6 text-center">
+                <div class="form-group">
+                    <label asp-for="HotelPicture">Hotel Picture</label>
+                    <div class="image-container">
+                        <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.HotelPicture))" alt="Hotel Picture" class="image" />
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+                <style>
+                    .image-container {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                    }
+
+                    .image {
+                        max-width: 100%;
+                        max-height: 100%;
+                        width: auto;
+                        height: 500px;
+                        object-fit: contain;
+                    }
+
+                    .button-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-top: 10px;
+                    }
+
+                        .button-container button {
+                            flex: 1;
+                            margin: 0 5px; /* Adjust the margin as needed */
+                            width: 120px; /* Adjust the width as needed */
+                            height: 40px; /* Adjust the height as needed */
+                            font-size: 16px;
+                        }
+
+                            .button-container button.active {
+                                background-color: #e84646;
+                                color: white;
+                            }
+                </style>
+
+                <div class="form-group row">
+                    <div class="col-12">
+                        <div class="image-container">
+                            <label asp-for="IdentityCertifcate">Identity Certifcate</label>
+                            <div class="col-md-6">
+                                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.IdentityCertifcate))" alt="Identity Certifecate photo" class="image" />
+                            </div>
+                            <label asp-for="HotelPicture">Hotel Picture</label>
+                            <div class="col-md-6">
+
+                                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.HotelPicture))" alt="Hotel Picture" class="image" />
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            @if (Model.State == OurHotels.Dto.Hotel.State.confirmed)
+                            {
+                                <form asp-controller="Admin" asp-action="CancelHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-danger active">Cancel</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="ConfirmHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-success">Confirmed</button>
+                                </form>
+                            }
+                            else if (Model.State == OurHotels.Dto.Hotel.State.canceled)
+                            {
+                                <form asp-controller="Admin" asp-action="ConfirmHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-success">Confirm</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="CancelHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-danger active">Cancel</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Admin" asp-action="ConfirmHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-success">Confirm</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="CancelHotel" method="post" asp-route-id="@Model.HotelEntityId">
+                                    <button type="submit" class="btn btn-outline-danger">Cancel</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+            </div>
+
+
+    </div>
+
+
+</div>

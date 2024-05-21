@@ -1,0 +1,107 @@
+﻿@model List< OurHotels.Dto.Hotel.RoomDto>
+@{
+	Layout = "_HotelLayout";
+	ViewData["title"]= "All Suits";
+	bool suit=true;
+}
+<style>
+
+</style>
+		<div class="col-md-7 col-lg-8 col-xl-9">
+				<div class="one">
+	
+ <div class="d-flex justify-content-end">
+            <div>
+				<form>
+		<button  class="btn btn-primary" asp-controller="Room" asp-action="AddSuit">
+                    <i class="bi bi-plus"></i>Add Suit
+                </button>
+	</form>
+                
+            </div>
+           
+			</div>
+<div class="service-count">
+              
+				<div class="patient-details">
+		             @if(Model.Count()==1)
+				{
+					<h5><b><i class="service-count-number"  style="font-size: 18px; font-weight: bold;"></i></b>@Model.Count() <span>Suit</span></h5>
+				}else if(Model.Count() > 1)
+                {
+                    <h5><b><i class="service-count-number" style="font-size: 18px; font-weight: bold;"></i></b>@Model.Count() <span>Rooms</span></h5>
+                }
+                else
+                {
+                    <h5 class="no-rooms-text">No suits added yet</h5>
+                }
+	</div>
+            </div>
+
+</div>
+							<div class="row row-grid">
+								<input hidden asp-for="@suit"/>
+			@foreach(var item in Model)
+			{
+								<div class="col-md-6 col-lg-4 col-xl-3">
+									
+			<div class="card widget-profile pat-widget-profile">
+
+										<div class="card-body">
+											<div class="pro-widget-content">
+												<div class="profile-info-widget">
+													<a  class="booking-doc-img">
+														<h5>@item.RoomNum</h5>
+													</a>
+													<div class="profile-det-info">
+														<h3>@item.Floor</h3>
+														
+														<div class="patient-details">
+															<h5><b>Room Price :</b> @item.Price</h5>
+															<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> @item.RoomDirection1, @item.RoomDirection2</h5>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="patient-info">
+												<ul>
+													<li>Beds <span>@item.numOfBeds</span></li>
+													<li>Phone <span>@item.phone</span></li>
+													
+												</ul>
+											</div>
+
+											<ul class="clinic-gallery" style="display: flex; flex-wrap: wrap;">
+												@foreach(var im in item.Images)
+						                               	{
+															   <li  style="flex: 1 0 33.33%; padding: 5px; list-style-type:none">
+													<a class="avatar avatar-sm mr-2" data-fancybox="gallery">
+														
+													<img class="avatar-img rounded-circle" src="~/assets/img/rooms/@im.Url.Split("rooms\\").ElementAt(1)"/>
+													</a>
+												</li>
+							
+                                                          }
+												
+											
+											</ul>
+											<div class="card-footer text-center">
+												
+											 <a href="@Url.Action("EditSuit", "Room", new { RoomId = item.RoomEntityId })" class="btn btn-primary">Edit</a>
+							                <a href="@Url.Action("DeleteSuit", "Room", new { RoomId = item.RoomEntityId })" class="btn btn-danger ml-2">Delete</a>
+                          
+							
+                        </div>
+
+										</div>
+
+								</div>
+							</div>
+
+
+           }
+									</div>
+								
+
+						</div>
+

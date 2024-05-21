@@ -1,0 +1,342 @@
+﻿@model List<BookingInfoDto>
+@{
+    Layout = "_Layout";
+     DateTime? from = ViewData["from"] as DateTime? ??null;
+    DateTime? to = ViewData["to"] as DateTime? ??null;
+    var l = DateTime.Now.Date;
+}
+<div @*style="
+    margin-left: -224px;
+    margin-right: -224px;"*@ class="container-fluid">
+    <div class="row justify-content-center">
+<div class="col-md-7 col-lg-8 col-xl-9">
+<form  id="searchForm" asp-action="GetBookingsForCustomer" asp-controller="Customer" method="get">
+@*<input type="hidden" name="from" id="from" />
+<input type="hidden" name="to" id="to" />
+*@
+<div class="row">
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="fromDate">From:</label>
+                <div class="input-group">
+                    <input type="date" class="form-control" name="from" placeholder="From" value="@from?.ToString("yyyy-MM-dd")" id="checkInDate" >
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="toDate">To:</label>
+                <div class="input-group">
+                    <input type="date" class="form-control" placeholder="To"id="checkOutDate" value="@to?.ToString("yyyy-MM-dd")"  name="to" >
+				
+
+                   
+                </div>
+				<p id="dateErrorMessage" style="color: red; display: none;">Please select a date equal to or later than the From date.</p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="row">
+    <div class="col-md-2">  
+        <button type="submit" class="btn btn-primary"> Search</button>
+    </div>
+
+</div>
+    </form>
+
+							<div  class="card">
+
+								<div class="card-body ">
+								@*<div>
+                               <input type="date" />
+                             </div>
+                             <div>
+                                   <input type="date" />
+                             </div>*@
+                             @*<div></div>*@
+									<!-- Tab Menu -->
+									<nav class="user-tabs mb-4">
+										<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+											<li class="nav-item">
+												<a class="nav-link active" href="#pat_appointments" data-toggle="tab">Hotels Booking</a>
+											</li>
+										</ul>
+									</nav>
+									<!-- /Tab Menu -->
+									
+									<!-- Tab Content -->
+									<div  class="tab-content pt-0">
+										
+										<!-- Appointment Tab -->
+										<div  id="pat_appointments" class="tab-pane fade active show">
+											<div class="card card-table mb-0">
+												<div class="card-body">
+													<div class="table-responsive">
+														<table class="table table-hover table-center mb-0">
+															<thead>
+																<tr>
+																	<th>Hotel</th>
+																	<th>CheckIn Date</th>
+																	<th>Checkout Date</th>
+																	<th>Room Number</th>
+																	<th>Price</th>
+																	<th>Booking Date </th>
+																	<th>Status</th>
+																	<th>Rating</th>
+																	<th>Review</th>
+																	<th>Add Rating an Review</th>
+																	<th>Cancel Booking</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+                                                               
+																@foreach( var item in Model)
+										{
+											<tr>
+																	<td>
+																		<h2 class="table-avatar">
+																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
+																				@if(item.HotelImage == null)
+															{
+																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+
+														}
+															else
+															{
+																	<img class="avatar-img rounded-circle"src="data:image;base64,@Convert.ToBase64String(item.HotelImage)" alt="User Image">
+																
+															}
+																			</a>
+																			<a href="doctor-profile.html">@item.HotelName <span>@item.City</span></a>
+																		</h2>
+																	</td>
+																	<td>@item.CheckInDate.ToString("dd/MM/yyyy")</td>
+																	<td>@item.CheckOutDate.ToString("dd/MM/yyyy")</td>
+																	<td>@item.Roomnum</td>
+																	<td>@item.Price <span>SY</span></td>
+																	<td>@item.BookingDate</td>
+																	 @if (item.CheckInDate.Date <= DateTime.Now.Date && DateTime.Now.Date < item.CheckOutDate.Date)
+        {
+                                                                 <td><span class="badge badge-pill bg-warning-light">During visit</span></td>
+        }
+                                                                  else if (item.CheckOutDate.Date <= DateTime.Now.Date)
+        {
+                                                                 <td><span class="badge badge-pill bg-success-light">Visited</span></td>
+        }
+        else if( DateTime.Now.Date <  item.CheckInDate.Date)
+        {
+                                                        <td><span class="badge badge-pill bg-danger-light">Not visited Yet</span></td>
+        }
+												
+																	
+																	
+		  <td>
+            @if (item.Rating.HasValue)
+           {
+                <input type="number" class="rating-input" disabled  value="@item.Rating" data-booking-id="@item.BookingId" />
+												}
+           else
+													{
+		    @*<input type="number" class="rating-input" disabled  value="No Rating Yet" data-booking-id="@item.BookingId" />*@
+														<span>No Rating</span>
+													}
+        </td>
+        <td>
+            @if (!string.IsNullOrEmpty(item.Review))
+            {
+                <input type="text"  class="review-input" value="@item.Review" disabled data-booking-id="@item.BookingId" />
+            }
+           else
+            {
+               <input type="text" class="review-input" value="No Review" disabled placeholder="No review"  data-booking-id="@item.BookingId" />
+            }
+        </td>
+         <td>
+            @if (DateTime.Now.Date <item.CheckInDate.Date)
+            {
+                <button class="btn btn-primary" style="background-color:gray" disabled>Rate and Review</button>
+            }
+            else
+            {
+                <!-- Add the button's data-booking-id and other attributes as needed -->
+                <button class="btn btn-primary add-rating-review-btn" data-booking-id="@item.BookingId">Rate and Review</button>
+            }
+        </td>
+        <td>
+            @if( DateTime.Now.Date <  item.CheckInDate.Date)
+            {
+                 <a href="javascript:;" class="btn btn-sm bg-danger-light js-delete" @*asp-route-bookId="@item.BookingId"*@ @*asp-action="CancelBooking"*@ data-id="@item.BookingId"><i class="fas fa-times"></i> Delete</a>
+            }else
+            {
+           <a href="javascript:;" class="btn btn-secondery "style="background-color:gray"  disabled >Cancel</a>
+            }
+        </td>
+		@*<td>
+    <button type="button" class="btn btn-primary add-rating-review-btn" data-booking-id="@item.BookingId">Add Rating and Review</button>
+</td>
+*@
+																	
+																</tr>
+										}
+															
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /Appointment Tab -->
+
+						
+										
+										
+										
+									</div>
+									<!-- Tab Content -->
+									
+								</div>
+							</div>
+						</div>
+                        </div>
+                        </div>
+						<!-- Modal -->
+<div class="modal fade" id="ratingReviewModal" tabindex="-1" role="dialog" aria-labelledby="ratingReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ratingReviewModalLabel">Rate and Review</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ratingReviewForm" asp-action="UpdateBookingInfo">
+                    <input type="hidden" name="bookingId" id="bookingId" />
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <input type="number" class="form-control" name="rating" id="rating" min="1" max="10" />
+                    </div>
+                    <div class="form-group">
+                        <label for="review">Review:</label>
+                        <textarea class="form-control" name="review" id="review" rows="4" maxlength="1000"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveRatingReviewBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+						<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+						<script src="~/assets/js/jquery.min.js"></script>
+					@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>*@
+
+<script>
+    $(document).ready(function () {
+      
+        $(".add-rating-review-btn").click(function () {
+            var bookingId = $(this).data("booking-id");
+            $("#bookingId").val(bookingId);
+            $("#rating").val(""); 
+            $("#review").val("");
+            $("#ratingReviewModal").modal("show");
+        });
+        
+        
+        $("#saveRatingReviewBtn").click(function () {
+            // Submit the form
+            $("#ratingReviewForm").submit();
+        });
+        
+       @* $("#searchForm").on("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        var fromDate = $("#checkInDate").val();
+        var toDate = $("#checkOutDate").val();
+        
+       
+        $("#from").val(fromDate);
+        $("#to").val(toDate);
+        $(this).unbind('submit').submit();
+    });*@
+    });
+    </script>
+    <script>
+     function updateCheckOutMinDate() {
+        var checkInDateInput = document.getElementById("checkInDate");
+        var checkOutDateInput = document.getElementById("checkOutDate");
+
+        // Get the selected check-in date
+        var selectedCheckInDate = new Date(checkInDateInput.value);
+
+        // Calculate the next day from the selected check-in date
+        var nextDay = new Date(selectedCheckInDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format the next day as "yyyy-mm-dd" (the required format for the date input)
+        var formattedNextDay = nextDay.toISOString().split('T')[0];
+
+        // Set the min attribute of the check-out date input to prevent selecting a date before the next day
+        checkOutDateInput.min = formattedNextDay;
+
+        // If the selected check-out date is before the new min date, reset it to the new min date
+        if (checkOutDateInput.value < formattedNextDay) {
+            checkOutDateInput.value = formattedNextDay;
+        }
+    }
+     document.getElementById("checkInDate").addEventListener("change", updateCheckOutMinDate);
+</script>
+
+						<script>
+							 $(document).ready(function () {
+						  $('.js-delete').on('click', function () {
+                var btn = $(this);
+				 var id = btn.data('id'); // Retrieve the 'id' value from the data attribute
+				// alert(id);
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this booking?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                          
+                            $.ajax({
+                                 url: '/Customer/CancelFromCustomer/' + id,
+                                success: function () {
+                                    var movieContainer = btn.parents('.col-12');
+                                    movieContainer.addClass('animate__animated animate__zoomOut');
+
+                                    setTimeout(function () {
+                                        movieContainer.remove();
+                                    }, 1000);
+
+                                    toastr.success('Booking canceled');
+                                },
+                                error: function () {
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+			  });
+			</script>

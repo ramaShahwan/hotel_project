@@ -1,0 +1,546 @@
+﻿@{
+
+    Layout = "_HotelLayout";
+    EditRoomDto editRoom = new EditRoomDto();
+     RoomDto roomDto =  ViewData["GetRoomById"] != null ? (RoomDto) ViewData["GetRoomById"] : null;
+    var RoomId = roomDto.RoomEntityId;
+    var l = RoomId;
+    var suit = roomDto.suite;
+}
+<style>
+     .thumbnail{
+        width: 50%;
+        height:25%;
+    }
+
+</style>
+
+<div class="col-md-7 col-lg-8 col-xl-9">
+    <div class="card">
+        <div class="card-body">
+
+             <form id="uploadForm" id="editRoomForm" enctype="multipart/form-data">
+                <div class="row form-row">
+                     <div class="col-12 col-md-6">
+                         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                        <div class="form-group">
+                           
+                           @* <input type="hidden" name="RoomEntityId" asp-for="@roomDto.RoomEntityId" value="@roomDto.RoomEntityId"/>*@
+                            <input type="hidden" name="RoomId" asp-for="@editRoom.RoomId" value="@roomDto.RoomEntityId"/>
+                                
+                              
+
+                            <label >Room's Floor</label>
+                            <input type="number"   id="Floor"   value="@roomDto.Floor" min="0" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                       <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>Room number</label>
+                            <input type="text" id="RoomNum"   value="@roomDto.RoomNum" readonly class="form-control" disabled/>
+                            <span class="text-danger"></span>
+                            <p id="message"></p>
+                        </div>
+                    </div>
+                       <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label >Room phone</label>
+                            <input  value="@roomDto.phone"  id="roomPhone" type="tel" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label >Number of beds</label>
+                            <input type="number" value="@roomDto.numOfBeds" class="form-control" min="1" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@editRoom.Date">Date</label>
+                            <input type="datetime"   value="@roomDto.Date.ToString("yyyy-MM-dd")" readonly class="form-control" />
+                            <span asp-validation-for="@editRoom.Date" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>Price of room</label>
+                            <div class="input-group">
+                            <input value="@roomDto.Price"   type="text" placeholder="Per night" class="form-control" />
+                               <div class="input-group-append">
+                                    <span class="input-group-text">SY</span>
+                                </div>
+                            </div>
+                              <span  class="text-danger"></span>
+                        </div>
+                    </div>
+                     <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>Offer price of room</label>
+                            <div class="input-group">
+                            <input value="@roomDto.Price2"   type="text" placeholder="Per night" class="form-control" />
+                               <div class="input-group-append">
+                                    <span class="input-group-text">SY</span>
+                                </div>
+                            </div>
+                              <span  class="text-danger"></span>
+                        </div>
+                    </div>
+                     <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>Room direction</label>
+                            <select   class="form-control">
+                                @if(roomDto.RoomDirection1 == "North")
+                                {
+                                      <option selected>North</option>
+                                      <option>South</option>
+                                }
+                                else if(roomDto.RoomDirection1 =="South")           {
+                                    <option >North</option>
+                                      <option selected>South</option>
+                                }
+                               
+                            </select>
+                            <select   class="form-control">
+                               @if(roomDto.RoomDirection2 == "West")
+                               { <option selected>West</option>
+                                <option>East</option>
+                                }
+                                else if(roomDto.RoomDirection2 =="East")
+                                { <option selected>West</option>
+                                <option selected>East</option>  
+                                }
+                               
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>Room size</label>
+                            <div class="input-group">
+                                <input  value="@roomDto.RoomSizeH"  type="text" placeholder="Height" class="form-control" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input  value="@roomDto.RoomSizeW"  type="text" placeholder="Width" class="form-control" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                            </div>
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+            @if(Model.Images.Count == 3)
+            {
+                     <div class="row">
+
+                 <div class="col-12 col-md-6">
+
+            <div class="form-group">
+
+                <input type="file" id="imageInput" style="display: none;">
+                <img id="imageThumbnail" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput2"  style="display: none;">
+                <img id="imageThumbnail2" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(1).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Second Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput3"  style="display: none;">
+                <img id="imageThumbnail3" class="thumbnail"  src="~/assets/img/rooms/@roomDto.Images.Skip(2).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)"  alt="Thumbnail">
+            </div>
+        </div>
+                 <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput4"  style="display: none;">
+                <img id="imageThumbnail4" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput5" style="display: none;">
+                <img id="imageThumbnail5" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput6"  style="display: none;">
+                <img id="imageThumbnail6" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>            
+    </div>
+        
+            }else if(Model.Images.Count == 4)
+            {
+
+                 <div class="row">
+
+                 <div class="col-12 col-md-6">
+
+            <div class="form-group">
+
+                <input type="file" id="imageInput"  style="display: none;">
+                <img id="imageThumbnail"  class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput2"  style="display: none;">
+                <img id="imageThumbnail2" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(1).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Second Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput3"  style="display: none;">
+                <img id="imageThumbnail3" class="thumbnail"  src="~/assets/img/rooms/@roomDto.Images.Skip(2).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+                 <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput4"  style="display: none;">
+                <img id="imageThumbnail4" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(3).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput5"  style="display: none;">
+                <img id="imageThumbnail5" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput6"  style="display: none;">
+                <img id="imageThumbnail6" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>            
+    </div>
+
+                    }else if(Model.Images.Count == 5)
+            {
+                         <div class="row">
+
+                 <div class="col-12 col-md-6">
+
+            <div class="form-group">
+
+                <input type="file" id="imageInput"  style="display: none;">
+                <img id="imageThumbnail" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput2"  style="display: none;">
+                <img id="imageThumbnail2" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(1).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Second Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput3"  style="display: none;">
+                <img id="imageThumbnail3" class="thumbnail"  src="~/assets/img/rooms/@roomDto.Images.Skip(2).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+                 <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput4" style="display: none;">
+                <img id="imageThumbnail4" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(3).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput5"  style="display: none;">
+                <img id="imageThumbnail5" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(4).FirstOrDefault().Url.Split("rooms\\").ElementAt(1)"  alt="Thumbnail">
+            </div>
+        </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput6"  style="display: none;">
+                <img id="imageThumbnail6" class="thumbnail" src="~/assets/img/hotels/Hand.jpg" alt="Thumbnail">
+            </div>
+        </div>            
+    </div>
+            }else if(Model.Images.Count ==6)
+            {  <div class="row">
+
+                 <div class="col-12 col-md-6">
+
+            <div class="form-group">
+
+                <input type="file" id="imageInput"  style="display: none;">
+                <img id="imageThumbnail" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.FirstOrDefault().Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput2"  style="display: none;">
+                <img id="imageThumbnail2" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(1).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Second Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput3"  style="display: none;">
+                <img id="imageThumbnail3" class="thumbnail"  src="~/assets/img/rooms/@roomDto.Images.Skip(2).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+                 <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput4"  style="display: none;">
+                <img id="imageThumbnail4" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(3).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput5"  style="display: none;">
+                <img id="imageThumbnail5" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(4).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)"  alt="Thumbnail">
+            </div>
+        </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group">
+                <input type="file" id="imageInput6"  style="display: none;">
+                <img id="imageThumbnail6" class="thumbnail" src="~/assets/img/rooms/@roomDto.Images.Skip(4).FirstOrDefault()?.Url.Split("rooms\\").ElementAt(1)" alt="Thumbnail">
+            </div>
+        </div>            
+    </div>}
+
+       
+       
+              <div class="col-12 col-md-6"></div>
+
+                <div class="submit-section">
+                   
+                    <button id="updateButton" asp-route-Id="@RoomId"  class="btn btn-primary submit-btn">Update</button>
+                </div>
+                    </div>
+             </form>
+            </div>
+            </div>
+            </div>
+           @* data-room-id="@Model.RoomEntityId" *@
+
+
+<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/assets/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $("#Floor").on('input', function() {
+        var floor = $(this).val();
+        var roomNumInput = $("#RoomNum");
+        var roomPhone=$("#roomPhone");
+          var messageContainer = $("#message");
+        if (floor && floor.length > 0) {
+            var updatedRoomNum = "";
+            
+            for (var i = 0; i < floor.length; i++) {
+                var digit = floor.charAt(i);
+                if (!isNaN(digit)) {
+                  
+                      updatedRoomNum += digit;
+                }
+            }
+           
+            roomNumInput.val(updatedRoomNum);
+              roomNumInput.prop('disabled', false);
+            roomPhone.val("0" + updatedRoomNum );
+
+             messageContainer.text("");
+        }
+        else {
+            roomNumInput.val("");
+            roomPhone.val("");
+                roomNumInput.prop('disabled', true);
+            messageContainer.text("Please enter a floor number first.");
+
+        }
+    });
+    $("#RoomNum").on('input', function() {
+        var roomNum = $(this).val();
+        var roomPhone = $("#roomPhone");
+        
+        if (roomNum && roomNum.length > 0) {
+            roomPhone.val("0" + roomNum);
+        }
+    });
+});
+</script>
+
+<!-- Add this script section to handle all image inputs -->
+
+
+
+
+
+ <script>
+    const imageInput1 = document.getElementById('imageInput');
+    const imageThumbnail1 = document.getElementById('imageThumbnail');
+    
+    imageThumbnail1.addEventListener('click', function() {
+      imageInput1.click();
+    });
+    
+    imageInput1.addEventListener('change', function(event) {
+      const file1 = event.target.files[0];
+      
+      if (file1) {
+        const reader = new FileReader();
+        
+        reader.onload = function() {
+          imageThumbnail1.src = reader.result;
+        };
+        
+        reader.readAsDataURL(file1);
+      }
+    });
+  </script>
+   <script>
+    const imageInput2 = document.getElementById('imageInput2');
+    const imageThumbnail2 = document.getElementById('imageThumbnail2');
+    
+    imageThumbnail2.addEventListener('click', function() {
+      imageInput2.click();
+    });
+    
+    imageInput2.addEventListener('change', function(event) {
+      const file2 = event.target.files[0];
+      
+      if (file2) {
+        const reader2 = new FileReader();
+        
+        reader2.onload = function() {
+          imageThumbnail2.src = reader2.result;
+        };
+        
+        reader2.readAsDataURL(file2);
+      }
+    });
+  </script>
+  @*3*@
+     <script>
+    const imageInput3 = document.getElementById('imageInput3');
+    const imageThumbnail3 = document.getElementById('imageThumbnail3');
+    
+    imageThumbnail3.addEventListener('click', function() {
+      imageInput3.click();
+    });
+    
+    imageInput3.addEventListener('change', function(event) {
+      const file3= event.target.files[0];
+      
+      if (file3) {
+        const reader3 = new FileReader();
+        
+        reader3.onload = function() {
+          imageThumbnail3.src = reader3.result;
+        };
+        
+        reader3.readAsDataURL(file3);
+      }
+    });
+  </script>
+  @*4*@
+      <script>
+    const imageInput4 = document.getElementById('imageInput4');
+    const imageThumbnail4 = document.getElementById('imageThumbnail4');
+    
+    imageThumbnail4.addEventListener('click', function() {
+      imageInput4.click();
+    });
+    
+    imageInput4.addEventListener('change', function(event) {
+      const file4= event.target.files[0];
+      
+      if (file4) {
+        const reader4 = new FileReader();
+        
+        reader4.onload = function() {
+          imageThumbnail4.src = reader4.result;
+        };
+        
+        reader4.readAsDataURL(file4);
+      }
+    });
+  </script>
+  @*5*@
+      <script>
+    const imageInput5= document.getElementById('imageInput5');
+    const imageThumbnail5 = document.getElementById('imageThumbnail5');
+    
+    imageThumbnail5.addEventListener('click', function() {
+      imageInput5.click();
+    });
+    
+    imageInput5.addEventListener('change', function(event) {
+      const file5= event.target.files[0];
+      
+      if (file5) {
+        const reader5 = new FileReader();
+        
+        reader5.onload = function() {
+          imageThumbnail5.src = reader5.result;
+        };
+        
+        reader5.readAsDataURL(file5);
+      }
+    });
+  </script>
+    <script>
+    const imageInput6= document.getElementById('imageInput6');
+    const imageThumbnail6 = document.getElementById('imageThumbnail6');
+    
+    imageThumbnail6.addEventListener('click', function() {
+      imageInput6.click();
+    });
+    
+    imageInput6.addEventListener('change', function(event) {
+      const file6= event.target.files[0];
+      
+      if (file6) {
+        const reader6 = new FileReader();
+        
+        reader6.onload = function() {
+          imageThumbnail6.src = reader6.result;
+        };
+        
+        reader6.readAsDataURL(file6);
+      }
+    });
+  </script>
+  <!-- Place this script after the form or inside your script tag -->
+<script>
+    // Get the update button and attach a click event handler
+    document.getElementById('updateButton').addEventListener('click', function () {
+        // Get the form data
+        const form = document.getElementById('editRoomForm');
+        const formData = new FormData(form);
+
+        // Perform any additional data manipulation here if needed
+        // For example, you can convert dates to a specific format or process the images
+
+        // Send the form data via AJAX
+        fetch('@Url.Action("EditRoom2", "Room")', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // If you expect JSON response from the server
+        .then(data => {
+            // Handle the response data if needed
+            // For example, you can display a success message or redirect to another page
+        })
+        .catch(error => {
+            // Handle errors if any
+        });
+    });
+</script>

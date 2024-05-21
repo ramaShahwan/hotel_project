@@ -1,0 +1,149 @@
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.Extensions.Localization;
+@using Our_Hotels1.Resources.Views.Hotel;
+@using System.Globalization;
+@using OurHotels.Dto.Customer;
+@model OurHotels.Dto.Customer.CustomerDto;
+
+@inject IStringLocalizer<HotelProfilesettingResource> Localizer;
+@{
+    Layout = "_layout";
+
+    CustomerDto editDto = new CustomerDto();
+    var userId = User.Identity.GetUserId();
+    editDto.UserEntityId = userId;
+    CustomerDto customerDto = ViewData["CustomerProfileSetting"] != null ? (CustomerDto)ViewData["CustomerProfileSetting"] : null;
+}
+@if (CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+{
+    <link rel="stylesheet"
+          href="https://cdn.rtlcss.com/bootstrap/v4.5.3/css/bootstrap.min.css"
+          integrity="sha384-JvExCACAZcHNJEc7156QaHXTnQL3hQBixvj5RV5buE7vgnNEzzskDtx9NQ4p6BJe"
+          crossorigin="anonymous" />
+    <style>
+        /* .fa-angle-double-left:before {
+            content: "\f100";
+        } */
+    </style>
+
+}
+<style>
+    .profile-picture {
+        height: 200px;
+        width: 200px;
+        object-fit: cover;
+    }
+</style>
+<div class="col-md-7 col-lg-8 col-xl-9" style="justify-content:center">
+    <div class="card">
+        <div class="card-body">
+
+            <!-- Profile Settings Form -->
+            <form asp-controller="Customer" asp-action="EditCustomerProfileSetting" method="post" enctype="multipart/form-data">
+
+                <!-- Rest of the form code -->
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="CustomerEntityId" asp-for="@customerDto.CustomerEntityId" value="@customerDto.CustomerEntityId" asp-route-Id="@customerDto.CustomerEntityId">
+                <input type="hidden" name="CustomerEntityId" asp-for="@editDto.CustomerEntityId" value="@customerDto.CustomerEntityId" asp-route-Id="@customerDto.CustomerEntityId" >
+                <div class="row form-row">
+                    <div class="col-12 col-md-12">
+                        <div class="form-group">
+                            <div class="change-avatar">
+                                <div class="pro11file-img">
+                                    <img src="assets/img/patients/patient.jpg" alt="User Image">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="@editDto.UserEntityId" />
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@editDto.FirstName">@Localizer["First Name"] </label>
+                            <input type="text" class="form-control" asp-for="@editDto.FirstName" value="@customerDto.FirstName">
+                            <span asp-validation-for="@editDto.FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@editDto.LastName">@Localizer["Last Name"]</label>
+                            <input type="text" class="form-control" asp-for="@editDto.LastName" value="@customerDto.LastName">
+                            <span asp-validation-for="@editDto.LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                 @*   <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label>@Localizer["Gender"]</label>
+                            <select asp-for="@editDto.gender" class="form-control select" >
+
+                                @if (customerDto.gender.ToString() == "Female")
+                                {
+                                    <option selected>Female</option>
+                                    <option>Male</option>
+                                }
+                                else if (customerDto.gender.ToString() == "Male")
+                                {
+                                    <option selected>Male</option>
+                                    <option>Female</option>
+                                }
+
+                                
+                            </select>
+                            <span asp-validation-for="@editDto.gender" class="text-danger"></span>
+                        </div>
+                    </div>*@
+
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@editDto.phoneNumber">@Localizer["Phone Number"]</label>
+                            <input type="text" asp-for="@editDto.phoneNumber" class="form-control" minlength="9" value="@customerDto.phoneNumber">
+                            <span asp-validation-for="@editDto.phoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@editDto.Birthday">@Localizer["Birthday"]</label>
+                            <input type="text" class="form-control" asp-for="@editDto.Birthday" value="@customerDto.Birthday">
+                            <span asp-validation-for="@editDto.Birthday" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            @*<label asp-for="@addHotelDto.IdentityCertifcate">Identity Certifecate photo </label>*@
+                            @*@if (Model.Identity_Certificate != null)*@
+                            @*{
+                                    <img class="profile-picture mt-25 " id="IdentityCertificate" alt="Identity Certifacre" src="data:image/*;base64,@(Convert.ToBase64String(Model.Identity_Certificate))">
+                                }
+                                else
+                                {
+                                    <img class="profile-picture mt-25" id="IdentityCertificate" alt="Identity Certifacre" src="/assets/img/avatar-male.jpg">
+
+                                }
+                                <div class="custome-file mt-2">
+                                    <input type="file"
+                                           accept="image/*"
+                                           asp-for="@editDto.Identity_Certificate"
+                                           class="custom-file-input"
+                                           onchange="document.getElementById('IdentityCertificate').src = window.URL.createObjectURL(this.files[0])" />
+                                    <label class="custom-file-label" asp-for="@editDto.Identity_Certificate"> Choose file picture of your Identity Certificate..</label>
+                                    <span class="text-danger" asp-validation-for="@editDto.Identity_Certificate"></span>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="submit-section">
+                    <button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
+                </div>
+            </form>
+            <!-- /Profile Settings Form -->
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

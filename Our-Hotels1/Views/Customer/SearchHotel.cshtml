@@ -1,0 +1,767 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNet.Identity;
+@using Our_Hotels1.Resources.Views.Shared
+@inject IStringLocalizer<LayoutResource> localizer2
+@inject SignInManager<UserEntity> SignInManager
+
+@*@model List<OurHotels.Dto.Customer.HotelDetailsDto>*@
+@{
+    Layout = "_Layout";
+     // ViewData["From"] from = new DateTime();
+    //  ViewData["to"] to= new DateTime();
+     DateTime checkInDate = ViewData["From"] as DateTime? ?? DateTime.Now;
+    DateTime checkOutDate = ViewData["To"] as DateTime? ?? DateTime.Now.AddDays(1);
+    List<OurHotels.Dto.Customer.HotelDetailsDto> Hotels = ViewData["SearchHotels"] != null ? (List<OurHotels.Dto.Customer.HotelDetailsDto>)ViewData["SearchHotels"] : null;
+}
+    
+
+<style>
+    /* Custom radio button styles */
+    .custom_radio {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-bottom: 12px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .custom_radio .radio_icon {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+    }
+
+    .custom_radio input[type="radio"] {
+        opacity: 0;
+        z-index: 1;
+        cursor: pointer;
+    }
+
+    .custom_radio .radio_icon::after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .custom_radio input[type="radio"]:checked + .radio_icon::after {
+        display: block;
+    }
+
+    .custom_radio .radio_icon::after {
+        top: 4px;
+        left: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #2196F3;
+    }
+     /* Style for the "View Booking Rooms" button */
+    .btn-view-booking-rooms {
+        float: right; /* Float the button to the right side of the card header */
+    }
+
+    .btn-view-booking-rooms button {
+        padding: 8px 16px; /* Adjust the padding to your preference */
+        font-size: 16px;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-view-booking-rooms button:hover {
+        background-color: #0056b3; /* Change the background color on hover */
+    }
+  /* Style for the "View Booking Rooms" button */
+    .btn-view-booking-rooms {
+        float: right; /* Float the button to the right side of the card header */
+    }
+
+    .btn-view-booking-rooms button {
+        padding: 8px 16px; /* Adjust the padding to your preference */
+        font-size: 16px;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-view-booking-rooms button:hover {
+        background-color: #0056b3; /* Change the background color on hover */
+    }
+
+    /* Additional styles for the modal dialog */
+    .modal-dialog {
+        max-width: 600px; /* Set the maximum width of the modal */
+    }
+
+    .modal-body {
+        /* Add any additional styles for the modal body if needed */
+    }
+
+    .modal-footer {
+        /* Add any additional styles for the modal footer if needed */
+    }
+    .btn-view-booking-rooms button:hover {
+        background-color: darkred;
+    }
+    .apt-btn :hover {
+        background-color:#ffbc34;
+    }
+     
+    .clinic-booking a.apt-btn:hover 
+    {
+        background-color: white;
+        color:#DAA520;
+        /* Add other styles you want when the link is clicked */
+    }
+</style>
+<link rel="stylesheet" href="~/assets/css/style.css"/>
+<div style="height:70px" class="breadcrumb-bar">
+<!-- Add the "View Booking Rooms" button here -->
+<div class="btn-view-booking-rooms">
+    <a class="btn btn-primary" id="viewBookingRoomsBtn">View Booking Rooms</a>
+</div>
+
+</div>
+<!-- Modal -->
+<div class=" modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel">Booking Rooms</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="bookedRoomsContainer">
+                    <!-- Booked rooms will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary" id="makeBookingBtn">Make Booking Now</button>*@
+                <a asp-action="BookingFinised" class="btn btn-primary" id="makeBookingBtn">Make Booking Now</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Your existing HTML code for displaying the hotels and rooms -->
+
+   
+			<div class="content" style="transform: none; min-height: 128.5px;">
+				<div class="container-fluid" style="transform: none;">
+
+					<div class="row" style="transform: none;">
+						<div class="col-md-12 col-lg-4 col-xl-3 @*theiaStickySidebar*@" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
+						
+							<!-- Search Filter -->
+<form id="searchForm" method="get">
+							
+							<div class="card search-filter">
+    <div class="card-header">
+        <h4 class="card-title mb-0">Search Filter</h4>
+        
+    </div>
+
+    <div class="card-body">
+        <div class="filter-widget">
+    <div>
+        <label for="checkInDate">Check-in Date</label>
+        <input min="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" class="form-control" value="@checkInDate.ToString("yyyy-MM-dd")" name="checkInDate"  id="checkInDate" >
+    </div>
+    <div>
+        <label for="checkOutDate">Check-out Date</label>
+        <input type="date" class="form-control"value="@checkOutDate.ToString("yyyy-MM-dd")" name="checkOutDate" id="checkOutDate">
+    </div>
+</div>
+        <div class="filter-widget">
+            <h4>City</h4>
+          <div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Damascus" >
+        <span class="radio_icon"></span> Damascus
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Damascus_Countryside">
+        <span class="radio_icon"></span> Damascus Countryside
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Aleppo">
+        <span class="radio_icon"></span> Aleppo
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="AlHasakah">
+        <span class="radio_icon"></span> Al-Hasakah
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Homs">
+        <span class="radio_icon"></span> Homs
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Hama">
+        <span class="radio_icon"></span> Hama
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Daraa">
+        <span class="radio_icon"></span> Daraa
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Latakia">
+        <span class="radio_icon"></span> Latakia
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Tartus">
+        <span class="radio_icon"></span> Tartus
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Idlib">
+        <span class="radio_icon"></span> Idlib
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="AlRaqqah">
+        <span class="radio_icon"></span> Al-Raqqah
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="Alqunaytirah">
+        <span class="radio_icon"></span> Al-Qunaytirah
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="DayralZawr">
+        <span class="radio_icon"></span> Deir ez-Zor (Dayr al-Zawr)
+    </label>
+</div>
+<div>
+    <label class="custom_radio">
+        <input type="radio" name="cityName" value="AlSuwayda">
+        <span class="radio_icon"></span> As-Suwayda (Al-Sweida)
+    </label>
+</div>
+
+            <!-- Add other cities here -->
+        </div>
+      <div class="filter-widget">
+    <h4>Hotels</h4>
+    <div id="hotel-options">
+        <!-- Hotel options will be dynamically added here based on the selected city -->
+    </div>
+</div>
+       @* <div class="filter-widget">
+            <h4>Price</h4>
+            <div>
+                <label class="custom_radio">
+                    <input type="radio" name="price" value="cheapest" >
+                    <span class="radio_icon"></span> Cheapest
+                </label>
+            </div>
+            <div>
+                <label class="custom_radio">
+                    <input type="radio" name="price" value="highest">
+                    <span class="radio_icon"></span> Highest
+                </label>
+            </div>
+        </div>*@
+        <div class="filter-widget">
+            <h4>Stars Number</h4>
+              <div>
+                <label class="custom_radio">
+                    <input type="radio" name="numOfStars" value="1">
+                    <span class="radio_icon"></span>
+                     <i style="color:yellow" class="fas fa-star filled"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star "></i>
+                </label> 
+            </div>
+             <div>
+                <label class="custom_radio">
+                    <input type="radio" name="numOfStars" value="2">
+                    <span class="radio_icon"></span>  
+                     <i style="color:yellow"  class="fas fa-star filled"></i>
+                      <i style="color:yellow"  class="fas fa-star filled"></i>
+                       <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                         <i class="fas fa-star"></i>
+               </label>
+            </div>
+            <div>
+                <label class="custom_radio">
+                    <input type="radio" name="numOfStars" value="3">
+                    <span class="radio_icon"></span> 
+                     <i style="color:yellow"  class="fas fa-star filled"></i>
+                      <i style="color:yellow"  class="fas fa-star filled"></i>
+                       <i style="color:yellow"  class="fas fa-star filled"></i>
+                        <i class="fas fa-star "></i>
+                         <i class="fas fa-star "></i>
+                </label>
+            </div>
+           <div>
+                <label class="custom_radio">
+                    <input type="radio" name="numOfStars" value="4">
+                    <span class="radio_icon"></span> 
+                  
+                     <i style="color:yellow"  class="fas fa-star filled"></i> <i style="color:yellow"  class="fas fa-star filled"></i> <i style="color:yellow"  class="fas fa-star filled"></i> 
+                 <i style="color:yellow"  class="fas fa-star filled"></i>
+                      <i class="fas fa-star "></i>
+                  </label>
+            </div>
+          <div>
+                <label class="custom_radio">
+                    <input type="radio" name="numOfStars" value="5">
+                    <span class="radio_icon"></span>   </label>
+
+                     <i style="color:yellow"  class="fas fa-star filled"></i>
+                      <i style="color:yellow"  class="fas fa-star filled"></i>
+                       <i style="color:yellow"  class="fas fa-star filled"></i>
+                      <i style="color:yellow"  class="fas fa-star filled"></i>
+                       <i style="color:yellow"  class="fas fa-star filled"></i>
+              
+            </div>
+        </div>
+        <div class="filter-widget">
+            <h4>Accommodation Type</h4>
+            <div>
+                <label class="custom_radio">
+                    <input type="radio" name="type" value="suit" >
+                    <span class="radio_icon"></span> Suit
+                </label>
+            </div>
+            <div>
+                <label class="custom_radio">
+                    <input type="radio" name="type" value="room">
+                    <span class="radio_icon"></span> Room
+                </label>
+            </div>
+        </div>
+        <div class="filter-widget">
+            <h4>Number of Beds</h4>
+            <div>
+                <input type="number" name="numOfBeds" class="form-control" min="1" max="10" placeholder="Enter Number of Beds">
+            </div>
+        </div>
+        <div class="btn-search">
+            @*onclick="filterHotels()*@
+            <button type="submit" asp-action="SearchHotel" class="btn btn-block" >Search</button>
+        </div>
+    </div>
+</div>
+</form>
+
+
+							<!-- /Search Filter -->
+							
+						<div @*class="theiaStickySidebar"*@ style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none; left: 20px; top: 0px;">
+							
+						
+						<div class="resize-sensor" style="position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden;"><div class="resize-sensor-expand" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;"><div style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 362px; height: 1815px;"></div></div><div class="resize-sensor-shrink" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;"><div style="position: absolute; left: 0; top: 0; transition: 0s; width: 200%; height: 200%"></div></div></div></div></div>
+						
+						<div class="col-md-12 col-lg-8 col-xl-9">
+                            <div id="hotelResultsContainer">
+			 @foreach (var hotel in Hotels)
+                {
+                    @foreach (var room in hotel.Rooms)
+                    {
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="doctor-widget">
+                                    <div class="doc-info-left">
+                                        <div class="doctor-img">
+                                            <a href="doctor-profile.html">
+                                                @if(hotel.HotelPicture == null)
+                                                    {
+                                                        
+                                                <img src="~/assets/img/avatar-male.jpg" class="img-fluid" alt="User Image">
+
+                                            }else
+                                                    {
+                                                <img src="data:image;base64,@Convert.ToBase64String(hotel.HotelPicture)" class="img-fluid" alt="User Image">
+                                                        
+                                                    }
+                                            </a>
+                                        </div>
+                                        <div class="doc-info-cont">
+                                            <h4 class="doc-name">@hotel.HotelName</h4>
+                                            <p class="doc-speciality"><i class="fas fa-map-marker-alt"></i> @hotel.HotelAddress</p>
+                                            <h5 class="doc-department">@hotel.City</h5>
+                                           <div class="rating">
+                                            @for (int i = 1; i <= 5; i++)
+                                                     {
+                                                       if (i <= hotel.NumOfStars)
+                                                          {
+
+                                                           <i class="fas fa-star filled"></i>
+                                                            }
+                                                          else
+                                                                {
+                                              <i class="fas fa-star"></i>
+                                                             }
+                                                    }
+                                         </div>
+
+                                            <div class="clinic-details">
+                                                @*<p class="doc-location"><i class="fas fa-map-marker-alt"></i>@hotel.City</p>*@
+                                                <ul class="clinic-gallery">
+                                                    @foreach (var image in room.RoomImagesUrls)
+                                                    {
+                                                        <li>
+                                                            <a class="avatar avatar-sm mr-2" data-fancybox="gallery">
+                                                                <img  src="~/assets/img/rooms/@image.Url.Split("rooms\\").ElementAt(1)" alt="Room Image">
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <div class="clinic-services" id="clinicServices_@room.RoomEntityId">
+                            <!-- Content will be updated dynamically using JavaScript -->
+                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="doc-info-right">
+                                        <div class="clini-infos">
+                                            <ul>
+
+                                                @if (room.AvgRating != null && double.TryParse(room.AvgRating.ToString(), out double avgRatingValue))
+                                                                   {
+                                                                 @if (avgRatingValue < 1)
+                                                                        {
+                                                                     <li>No rating yet</li>
+                                                                       }
+                                          else
+                                            {
+                                  <li><i class="far fa-thumbs-up"></i> @avgRatingValue.ToString("0.00")</li>
+                                   }
+                                  }
+                                     else
+                                        {
+                                    <li>No rating yet</li>
+}
+                                              @*<li><i class="far fa-thumbs-up"></i> @room.AvgRating</li>*@
+                                                 <li><i class="far fa-comment"></i> @room.NumOfReviews.ToString() Feedback </li>
+                                                      <li><i class="fas fa-bed"></i> @room.NumOfBeds Beds</li>
+                                                        @if (room.Sea == "Yes")
+                                                       {
+                                                                <li><i class="fas fa-water"></i>With sea view</li>
+                                        }
+                                                             else
+                                                {
+                                                      <li><i class="fas fa-water"></i>No sea view</li>
+                                                }
+                                                 @if(room.pric2 >=1)
+                                                    {
+                                                      <li>
+                                              <i class="far fa-money-bill-alt"></i> 
+                                             
+                                        <span class="old-price">@room.Price SY</span>
+                                                  <span class="new-price">@room.pric2 SY</span>
+    <i class="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
+                                                      </li>
+                                            }
+                                                    else
+                                                    {
+                                                        <li>   <i class="far fa-money-bill-alt"></i>  <span>@room.Price SY</span></li>
+                                                    }
+                                              
+                                                    @if (room.Suite == true)
+                                                {
+                                                    <li>Suit</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>Room</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div class="clinic-booking">
+                                                    <a class="view-pro-btn" asp-action="GetRoomProfile"   asp-route-roomId="@room.RoomEntityId">View Profile</a>
+                                                    @*<a class="view-pro-btn"   asp-route-roomId="@room.RoomEntityId">View Profile</a>*@
+
+                                             @if (SignInManager.IsSignedIn(User))
+                                                {
+                                                    @*<a class="apt-btn" data-room-id="@room.RoomEntityId" href="#">Add This room for Reservation</a>*@
+                                            <a class="apt-btn" data-room-id="@room.RoomEntityId" href="#" onclick="addRoomForReservation(this)">Add This room for Reservation</a>
+
+                                                }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                </div>
+                
+							<!-- /Doctor Widget -->
+							<div class="load-more text-center">
+								<a class="btn btn-primary btn-sm"  href="@Url.Action("LoadRoomsInfo", "Home")" >Load More</a>	
+							</div>	
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<script src="~/assets/js/jquery-3.2.1.min.js"></script>
+           @*<script src="~/assets/js/"></script>*@
+			<script>
+    $(document).ready(function() {
+     
+        //
+     @*    $("#searchForm").submit(function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Gather form data using serialize()
+        var formData = $(this).serialize();
+
+        // Display the serialized data in the console (for demonstration)
+        console.log(formData);
+
+        // Send AJAX request
+        $.ajax({
+            type: "POST", // or "GET" based on your server-side handling
+            url: "/Customer/SearchHotel", // Replace with your server URL
+            data: formData,
+            success: function(response) {
+              
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    });*@
+        //
+         $("#viewBookingRoomsBtn").on("click", function () {
+            // Call the action method using AJAX
+            $.ajax({
+                url: '@Url.Action("ViewBookingfRooms", "Customer")',
+                type: 'GET',
+                success: function (data) {
+                    // var jsonData = JSON.parse(data); // Parse the data as JSON
+                    // if (jsonData && Array.isArray(jsonData)) {
+                    // Handle the successful response here
+                    // Assuming the returned data is an array of objects representing booked rooms
+                    if (data && Array.isArray(data)) {
+                        // Clear any previous data in the modal
+                       
+
+                        $("#bookedRoomsContainer").empty();
+                        //alert(data);
+                        // Iterate through the data and create cards for each booked room
+                        data.forEach(function (room) {
+                              console.log("Room object:", room); 
+                            var cardHtml = `
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Hotel: ${room.hotelName}</h5>
+                                        <p class="card-text">Room Number: ${room.roomNumber}</p>
+                                        <p class="card-text">Room Beds: ${room.roomBed}</p>
+                                        @*<p class="card-text">Booking Price: ${room.BookingPrice}</p>*@
+                                        <p class="card-text">Check-In Date: ${room.checkInDate}</p>
+                                        <p class="card-text">Check-Out Date: ${room.checkOutDate}</p>
+                                    </div>
+                                 <div class="card-footer text-center">
+                <a href="/Customer/CancelBooking?bookId=${room.bookId}" class="cancel-booking-link btn btn-danger ml-2">Cancel booking</a>
+            </div>
+
+                                </div>
+                            `;
+                            // Append the card to the container
+                            $("#bookedRoomsContainer").append(cardHtml);
+                        });
+                        
+                        // Open the modal
+                        $("#bookingModal").modal('show');
+                    }
+                },
+                error: function (error) {
+                    // Handle the error response here
+                    console.log("Error fetching booked rooms data:", error);
+                }
+            });
+        });
+
+        // Add a click event for the "Make Booking Now" button if you want to handle that separately
+        $("#makeBookingBtn").on("click", function () {
+            // Implement your logic here for making a booking
+            // ...
+        });
+   
+        //
+      
+        //
+          
+        // Handle the click event of the city options
+        $('input[name="cityName"]').on('click', function () {
+            var cityName = $(this).val(); // Get the selected city name
+            // Send an AJAX request to the server with the selected cityName
+            fetchHotelsByCity(cityName);
+        });
+
+        // Function to fetch hotels by city from the server
+        function fetchHotelsByCity(cityName) {
+         //   alert("cityName")
+            // Make an AJAX request to the server
+            $.ajax({
+                type: 'GET', 
+                url: '@Url.Action("GetHotelDetailsByName", "Customer")', // Replace with your action URL to get hotels by city
+                data: { cityName: cityName }, // Pass the selected cityName to the server
+                dataType: 'json', // Change this based on the data type returned from the server
+                // contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                   
+                    renderHotelOptions(data); 
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+        }
+
+       // Function to render the hotel options in the UI
+// Function to render the hotel options in the UI
+function renderHotelOptions(hotels) {
+    // Clear the previous hotel options if any
+    $('#hotel-options').empty();
+   // alert(hotels);
+    // Render the hotel options as radio buttons
+    hotels.forEach(function (hotel) {
+       //  console.log(hotel);
+         //  alert(hotel);
+        var hotelOptionElement = $('<div>');
+        var hotelRadio = $('<input>')
+            .attr('type', 'radio')
+            .attr('name', 'hotelName')
+            .val(hotel);
+
+        //    alert(hotel.HotelName);
+
+        var hotelLabel = $('<label>')
+            .addClass('custom_radio')
+            .append(hotelRadio)
+            .append('<span class="radio_icon"></span>')
+            .append(hotel);
+
+        hotelOptionElement.append(hotelLabel);
+        $('#hotel-options').append(hotelOptionElement);
+    });
+}
+
+
+    });
+</script>
+
+
+
+<script>
+    @*JavaScript code to handle radio button behavior*@
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all radio buttons on the page
+        var radioButtons = document.querySelectorAll("input[type=radio]");
+        
+        // Keep track of the last clicked radio button
+        var lastClickedRadio = null;
+        
+        // Add click event listener to radio buttons
+        radioButtons.forEach(function(radioButton) {
+            radioButton.addEventListener('click', function() {
+                // If the clicked radio button is the same as the last one, uncheck it
+                if (radioButton === lastClickedRadio) {
+                    radioButton.checked = false;
+                    lastClickedRadio = null; // Reset the last clicked radio
+                } else {
+                    lastClickedRadio = radioButton; // Update the last clicked radio
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function addRoomForReservation(button) {
+        var roomId = $(button).data('room-id');
+        var checkInDate = $('#checkInDate').val();
+        var checkOutDate = $('#checkOutDate').val();
+
+        // AJAX call to the server
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AddforBooking", "Customer")',
+            data: { roomId: roomId, CheckinDate: checkInDate, CheckoutDate: checkOutDate },
+            dataType: 'json',
+            success: function (response) {
+                
+              console.log("Hi");
+            },
+            error: function (error) {
+                console.error(error);
+               
+            }
+        });
+    }
+</script>
+@*Checkin and checkout*@
+<script>
+    function updateCheckOutMinDate() {
+        var checkInDateInput = document.getElementById("checkInDate");
+        var checkOutDateInput = document.getElementById("checkOutDate");
+
+        // Get the selected check-in date
+        var selectedCheckInDate = new Date(checkInDateInput.value);
+
+        // Calculate the next day from the selected check-in date
+        var nextDay = new Date(selectedCheckInDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format the next day as "yyyy-mm-dd" (the required format for the date input)
+        var formattedNextDay = nextDay.toISOString().split('T')[0];
+
+        // Set the min attribute of the check-out date input to prevent selecting a date before the next day
+        checkOutDateInput.min = formattedNextDay;
+
+        // If the selected check-out date is before the new min date, reset it to the new min date
+        if (checkOutDateInput.value < formattedNextDay) {
+            checkOutDateInput.value = formattedNextDay;
+        }
+    }
+
+
+    // Add event listener to the check-in date input to update the check-out date min attribute
+    document.getElementById("checkInDate").addEventListener("change", updateCheckOutMinDate);
+</script>
+<!-- Your HTML content above -->

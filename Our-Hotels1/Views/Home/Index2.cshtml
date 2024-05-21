@@ -1,0 +1,477 @@
+﻿
+@{
+	Layout = "_Layout";
+}
+ <link rel="stylesheet" href="~/assets/css/style.css"/>
+  <link href="~/assets/newcss/jquery-ui.css" rel="stylesheet" />
+<script src="~/assets/newjs/jquery-3.2.1.min.js"></script>
+<script src="~/assets/newjs/jquery-ui.js"></script>
+
+
+<script src="~/assets/js/bootstrap.min.js"></script>
+<script src="~/assets/js/slick.js"></script>
+@*<script src="~/assets/js/jquery.min.js"></script>*@
+<style>
+  /* Custom CSS for flex alignment */
+
+
+  #roomCount {
+    margin-bottom: 10px; /* Add some space between the input and the "Add Rooms" button */
+  }
+
+  .search-box {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+
+  #searchBtn {
+    margin-bottom: 10px; /* Add some space between the button and the bottom edge */
+  }
+   .ui-autocomplete {
+        background-color: white; /* Set the background color to white or any other desired color */
+        border: 1px solid #ddd; /* Add a border to the menu for better visual separation */
+        max-height: 150px; /* Limit the maximum height of the menu to prevent excessive scrolling */
+        overflow-y: auto; /* Enable vertical scrolling if the content exceeds the max height */
+    }
+</style>
+
+@using System.Globalization
+@using Microsoft.Extensions.Localization
+@using Our_Hotels1.Resources.Views.Shared
+@inject IStringLocalizer<LayoutResource> localizer2
+
+			<!-- Home Banner -->
+			<section class="section section-search">
+				<div class="container-fluid">
+					<div class="banner-wrapper">
+						<div class="banner-header text-center">
+							<h1 style="color: black;">@localizer2["Search Hotel"]</h1>
+							<!-- <p style="color:#36454F;">Discover the best Hotels the city nearest to you.</p> -->
+						</div>
+                         
+						<!-- Search -->
+						<form id="searchForm">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="search-box">
+                <div class="form-group search-location">
+                    <input type="text" class="form-control" id="cityInput" placeholder="Search City">
+                    <span id="ForDrop"></span>
+                </div>
+               
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="search-box">
+                <div class="form-group search-name">
+                    <input type="text" class="form-control" id="hotelNameInput" placeholder="Search Hotel">
+                    <ul id="hotelNameDropdown"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="row">
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="fromDate">From:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker" placeholder="From" id="fromDate">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="search-box">
+            <div class="form-group search-time">
+                <label for="toDate">To:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker" placeholder="To" id="toDate" disabled>
+				
+
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                    </div>
+                </div>
+				<p id="dateErrorMessage" style="color: red; display: none;">Please select a date equal to or later than the From date.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="row">
+  <div class="col-md-6">
+    <div class="search-box">
+      <div class="form-group">
+        <input type="number" id="roomCount" class="form-control" placeholder="Enter the number of rooms">
+		   <div id="roomCountError" class="error-message" style="display: none; color:red" >Please enter a valid number of rooms greater than zero.</div>
+      </div>
+      <a href="#" class="btn btn-secondary small-button" id="addRoomsButton">Add Rooms</a>
+    </div>
+    <div id="roomInputsContainer"></div>
+  </div>
+  <div class="col-md-6 d-flex justify-content-md-end align-items-end">
+    <button type="submit" id="searchBtn" class="btn btn-primary search-btn">
+      <i class="fas fa-search"></i> <span>Search</span>
+    </button>
+  </div>
+</div>
+</form>
+
+
+						<!-- /Search -->
+						
+					</div>
+				</div>
+			</section>
+			<!-- /Home Banner -->
+			  
+			<!-- Clinic and Specialities -->
+			<section class="section section-specialities">
+				<div class="container-fluid">
+					<div class="section-header text-center">
+						<h2 style="font-weight: 700;">Cities</h2>
+						<p class="sub-title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-md-9">
+							<!-- Slider -->
+							<div class="specialities-slider slider">
+								
+								<!-- Slider Item -->
+								<div class="speicality-item text-center">
+									<div class="speicality-img">
+										<img src="~/assets/img/avatar-male.jpg" class="img-fluid" alt="Speciality">
+										<span><i class="fa fa-circle" aria-hidden="true"></i></span>
+									</div>	
+									<p>Aleppo</p>
+								</div>							
+								<!-- /Slider Item -->
+								
+							</div>
+							<!-- /Slider -->
+							
+						</div>
+					</div>
+				</div>   
+			</section>	 
+			<!-- Clinic and Specialities -->
+		  
+			<!-- Popular Section -->
+			<section class="section section-doctor">
+				<div class="container-fluid">
+				   <div class="row">
+						<div class="col-lg-4">
+							<div class="section-header ">
+								<h2>Book Your Hotel</h2>
+								<p>Lorem Ipsum is simply dummy text </p>
+							</div>
+							<div class="about-content">
+								<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.</p>
+								<p>web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes</p>					
+								<!-- <a href="javascript:;">Read More..</a> -->
+							</div>
+						</div>
+						<div class="col-lg-8">
+							<div class="doctor-slider slider" style="width:40px">
+							
+
+								<!-- Doctor Widget -->
+								<div class="profile-widget">
+									<div class="doc-img">
+										<a href="doctor-profile.html">
+											<img class="img-fluid" alt="User Image" src="/assets/img/hotels/hotel1.jpg">
+										</a>
+										<a href="javascript:void(0)" class="fav-btn">
+											<i class="far fa-bookmark"></i>
+										</a>
+									</div>
+									<div class="pro-content">
+										<h3 class="title">
+											<a href="doctor-profile.html">Paul Richard</a> 
+											<i class="fas fa-check-circle verified"></i>
+										</h3>
+										
+										<div class="rating">
+											<i class="fas fa-star filled"></i>
+											<i class="fas fa-star filled"></i>
+											<i class="fas fa-star filled"></i>
+											<i class="fas fa-star filled"></i>
+											<i class="fas fa-star"></i>
+											<span class="d-inline-block average-rating">(49)</span>
+										</div>
+										<ul class="available-info">
+											<li>
+												<i class="fas fa-map-marker-alt"></i> California, USA
+											</li>
+											
+											<li>
+												<i class="far fa-money-bill-alt"></i> $100 - $400 
+												<i class="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
+											</li>
+										</ul>
+										<div class="row row-sm">
+											<div class="col-6">
+												<a href="doctor-profile.html" class="btn view-btn">View Profile</a>
+											</div>
+											<div class="col-6">
+												<a href="booking.html" class="btn book-btn">Book Now</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Doctor Widget -->
+								
+							</div>
+						</div>
+				   </div>
+				</div>
+			</section>
+			<!-- /Popular Section -->
+		   
+		   <!-- Availabe Features -->
+		   <section class="section section-features">
+				<div class="container-fluid">
+				   <div class="row">
+						<div class="col-md-5 features-img">
+							<img src="/assets/img/features/feature.jpg" class="img-fluid" alt="Feature">
+						</div>
+						<div class="col-md-7">
+							<div class="section-header">	
+								<h2 class="mt-2">Availabe Features in Our Hotels</h2>
+								<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>
+							</div>	
+							<div class="features-slider slider">
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-01.jpg" class="img-fluid" alt="Feature">
+									<p>Wifi</p>
+								</div>
+								<!-- /Slider Item -->
+								
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-02.jpg" class="img-fluid" alt="Feature">
+									<p>Gym</p>
+								</div>
+								<!-- /Slider Item -->
+								
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-03.jpg" class="img-fluid" alt="Feature">
+									<p>Massage</p>
+								</div>
+								<!-- /Slider Item -->
+								
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-04.jpg" class="img-fluid" alt="Feature">
+									<p>Bathroom</p>
+								</div>
+								<!-- /Slider Item -->
+								
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-05.jpg" class="img-fluid" alt="Feature">
+									<p>Resturant</p>
+								</div>
+								<!-- /Slider Item -->
+								
+								<!-- Slider Item -->
+								<div class="feature-item text-center">
+									<img src="/assets/img/features/feature-06.jpg" class="img-fluid" alt="Feature">
+									<p>Swimming Pool</p>
+								</div>
+								<!-- /Slider Item -->
+							</div>
+						</div>
+				   </div>
+				</div>
+			</section>		
+			<!-- Availabe Features -->
+			<!-- CSS -->
+
+<!-- JS -->
+<script>
+  const cities = [
+        "Damascus",
+        "Damascus_Countryside",
+        "Aleppo",
+        "AlHasakah",
+        "Homs",
+        "Hama",
+        "Daraa",
+        "Latakia",
+        "Tartus",
+        "Idlib",
+        "AlRaqqah",
+        "Alqunaytirah",
+        "DayralZawr",
+        "AlSuwayda"
+    ];
+    $(document).ready(function() {
+		  $("#cityInput").autocomplete({
+            source: cities,
+            appendTo: "#ForDrop",
+            open: function () {
+               
+                $(".ui-autocomplete").css("background-color", $("#cityInput").css("background-color"));
+            }
+        });
+        $('#addRoomsButton').click(function() {
+            var roomCount = parseInt($('#roomCount').val());
+			if (isNaN(roomCount) || roomCount <= 0) {
+                $('#roomCountError').show();
+                return;
+            } else {
+                $('#roomCountError').hide();
+            }
+          
+            $('#roomInputsContainer').empty();
+
+           
+            for (var i = 1; i <= roomCount; i++) {
+                var roomNumber = 'Room ' + i;
+                var inputElement = $('<div class="form-group">' +
+                                        '<label for="roomNumber' + i + '">' + roomNumber + ':</label>' +
+                                        '<input type="number" id="roomNumber' + i + '" class="form-control" placeholder="Enter the number of beds">' +
+                                    '</div>');
+                $('#roomInputsContainer').append(inputElement);
+            }
+        });
+		
+		  // datepicker
+		 // console.log("hhh");
+
+	 //
+	  @* $('#fromDate').datepicker({
+            minDate: 0,
+		//	dateFormat: 'dd-mm-yy',
+            onSelect: function (selectedDate) {
+                const toDateInput = $('#toDate');
+                toDateInput.datepicker('option', 'minDate', new Date(selectedDate));
+
+              
+                $('#dateErrorMessage').hide();
+				 if (selectedDate.trim() !== '') {
+                toDateInput.prop('disabled', false);
+            }
+            }
+        });
+
+        $('#toDate').datepicker({
+            //dateFormat: 'dd-mm-yy',
+          // disabled: true,
+        });
+		  $('#toDate').on('focus', function() {
+        const fromDateValue = $('#fromDate').val();
+        if (fromDateValue.trim() === '') {
+            $('#dateErrorMessage').text('Please select From Date first.');
+            $('#dateErrorMessage').show();
+            $(this).blur(); // Prevent focusing on toDate
+        }
+    });*@
+		//
+	 $('#searchBtn').on('click', function(e) {
+    e.preventDefault();
+    var city = $('#cityInput').val();
+    var hotelName = $('#hotelNameInput').val();
+    var roomCount = parseInt($('#roomCount').val());
+    var from = $('#fromDate').val();
+    var to=$('#toDate').val();
+    var rooms = [];
+    for (var i = 1; i <= roomCount; i++) {
+        var roomNumber = 'Room ' + i;
+        var numBeds = parseInt($('#roomNumber' + i).val());
+        rooms.push({ RoomNumber: roomNumber, NumBeds: numBeds });
+    }
+    var searchDto = {
+        City: city,
+        HotelName: hotelName,
+        Rooms: rooms , 
+        from:from,
+        to:to
+    };
+    alert(JSON.stringify(searchDto));
+    $.ajax({
+        url: '/Home/Search', 
+        type: 'POST',
+        data: JSON.stringify(searchDto),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(response) {
+            alert(response);
+            console.log(response);
+        },
+        error: function(error) {
+            alert(error);
+            console.error('Error:', error);
+        }
+    });
+});
+    });
+</script>
+
+<script>
+    function updateCheckOutMinDate() {
+        var checkInDateInput = document.getElementById("fromDate");
+        var checkOutDateInput = document.getElementById("toDate");
+
+        // Get the selected check-in date
+        var selectedCheckInDate = new Date(checkInDateInput.value);
+
+        // Calculate the next day from the selected check-in date
+        var nextDay = new Date(selectedCheckInDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format the next day as "yyyy-mm-dd" (the required format for the date input)
+        var formattedNextDay = nextDay.toISOString().split('T')[0];
+
+        // Set the min attribute of the check-out date input to prevent selecting a date before the next day
+        checkOutDateInput.min = formattedNextDay;
+
+        // If the selected check-out date is before the new min date, reset it to the new min date
+        if (checkOutDateInput.value < formattedNextDay) {
+            checkOutDateInput.value = formattedNextDay;
+        }
+    }
+
+    function updateDefaultCheckInAndOutDates() {
+        var checkInDateInput = document.getElementById("fromDate");
+        var checkOutDateInput = document.getElementById("toDate");
+
+        // Get the current date
+        var currentDate = new Date();
+
+        // Format the current date as "yyyy-mm-dd" (the required format for the date input)
+        var formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+        // Calculate the next day from the current date
+        var nextDay = new Date(currentDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // Format the next day as "yyyy-mm-dd" (the required format for the date input)
+        var formattedNextDay = nextDay.toISOString().split('T')[0];
+
+        // Set the default values and min attributes of the check-in and check-out date inputs
+        checkInDateInput.value = formattedCurrentDate;
+        checkInDateInput.min = formattedCurrentDate;
+        checkOutDateInput.value = formattedNextDay;
+        checkOutDateInput.min = formattedNextDay;
+    }
+
+    // Call the function initially to set the default values and min attributes of the date inputs
+    updateDefaultCheckInAndOutDates();
+
+    // Add event listener to the check-in date input to update the check-out date min attribute
+    document.getElementById("fromDate").addEventListener("change", updateCheckOutMinDate);
+</script>
